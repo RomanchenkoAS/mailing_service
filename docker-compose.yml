@@ -9,6 +9,7 @@ services:
     volumes:
       - postgres_db:/var/lib/postgresql/data
     environment:
+      - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=65mH6ftBQdZu
     restart: always
@@ -16,6 +17,27 @@ services:
       main:
         aliases:
           - db
+
+  web:
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    restart: "always"
+
+    depends_on:
+      - db
+    networks:
+      main:
+        aliases:
+          - web
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
 
 networks:
   main:
