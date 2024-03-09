@@ -4,12 +4,18 @@ version = "0.1.0"
 description = "This is a service to create and manage mailing lists."
 authors = ["Artur <RomanchenkoAS@yandex.ru>"]
 readme = "README.md"
+repository = "https://github.com/RomanchenkoAS/mailing_service"
+keywords = ["mailing", "django-app"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 django = "^5.0.3"
 
+[tool.poetry.group.test.dependencies]
+pytest = "*"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
