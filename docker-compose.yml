@@ -12,6 +12,13 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=65mH6ftBQdZu
     restart: always
+    networks:
+      main:
+        aliases:
+          - db
+
+networks:
+  main:
 
 volumes:
   postgres_db:
