@@ -1,3 +1,23 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import *
+
+
+@admin.register(Email)
+class EmailAdmin(admin.ModelAdmin):
+    ...
+
+
+@admin.register(SendList)
+class SendListAdmin(admin.ModelAdmin):
+    ...
+
+
+@admin.register(Footer)
+class FooterAdmin(admin.ModelAdmin):
+    ...
+
+
+@admin.register(Dispatch)
+class DispatchAdmin(admin.ModelAdmin):
+    ...
