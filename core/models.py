@@ -42,6 +42,10 @@ class Dispatch(models.Model):
     def send(self) -> None:
         raise NotImplementedError
 
+    def is_due(self) -> bool:
+        """Check if the dispatch is scheduled to be sent now."""
+        raise NotImplementedError
+
     def get_recipient_count(self) -> int | None:
         if not self.send_list:
             return None
