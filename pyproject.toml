@@ -15,6 +15,7 @@ psycopg2-binary = "^2.9.9"
 
 [tool.poetry.group.test.dependencies]
 pytest = "*"
+factory_boy = "*"
 
 [build-system]
 requires = ["poetry-core"]
