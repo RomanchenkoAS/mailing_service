@@ -30,9 +30,30 @@ class FooterAdmin(admin.ModelAdmin):
 
 @admin.register(Dispatch)
 class DispatchAdmin(admin.ModelAdmin):
-    ...
+    list_display = ('title', 'last_sent_at', 'next_due_at', 'get_recipient_count_display')
+    actions = ['send_now', 'toggle_activation']
+
+    def get_recipient_count_display(self, obj):
+        return obj.get_recipient_count()
+
+    get_recipient_count_display.short_description = 'Recipient Count'
+
+    def send_now(self, request, queryset):
+        for dispatch in queryset:
+            dispatch.send()
+
+    send_now.short_description = "Send selected dispatches now"
+
+    def toggle_activation(self, request, queryset):
+        for dispatch in queryset:
+            dispatch.toggle_activation()
+
+    toggle_activation.short_description = "Toggle activation of selected dispatches"
 
 
 @admin.register(Scheduler)
 class SchedulerAdmin(admin.ModelAdmin):
-    list_display = ('frequency', 'time_of_day')
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ["frequency", "time_of_day"]
+        return super().get_readonly_fields(request, obj)

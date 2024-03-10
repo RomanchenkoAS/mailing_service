@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Dispatch {{ dispatch }} details</title>
+{% endblock title %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex align-items-center justify-content-between">
+        <h1 class="h1 mb-0 mr-3">Dispatch "{{ dispatch.title }}"</h1>
+        <div>
+            <a href="{% url 'dispatch-list' %}" class="btn btn-primary">Back to Dispatch List</a>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <!-- Static stats -->
+        <div class="col-md-6">
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <strong>Subject:</strong>
+                </div>
+                <div class="col-md-8">
+                    {{ dispatch.subject }}
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <strong>Text:</strong>
+                </div>
+                <div class="col-md-8">
+                    {{ dispatch.text }}
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <strong>Footer:</strong>
+                </div>
+                <div class="col-md-8">
+                    {% if dispatch.footer %}
+                    {{ dispatch.footer.text|linebreaksbr }}
+                    {% else %} - {% endif %}
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <strong>Sent at:</strong>
+                </div>
+                <div class="col-md-8">
+                    {{ dispatch.get_last_sent }}
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <strong>Next due:</strong>
+                </div>
+                <div class="col-md-8">
+                    {{ dispatch.next_due_at }}
+                </div>
+            </div>
+            <hr>
+
+            <!-- Management block -->
+            <div class="justify-content-between d-flex">
+                <div class="d-inline-block ">
+                    <a href="{% url 'admin:core_dispatch_change' dispatch.pk %}" class="btn btn-secondary">Edit</a>
+                </div>
+                <div class="d-inline-block">
+                    <form method="post" action="{% url 'dispatch_action' dispatch.pk %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" name="toggle_activation" class="btn btn-warning">Activate/Deactivate
+                        </button>
+                        <button type="submit" name="send_now" class="btn btn-success">Send Now</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Card for Real-time Statistics -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Real-time Statistics
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>Recipients:</strong>
+                            <span class="stats-counter" id="recipients_count_id">
+                                {{ dispatch.get_recipient_count }}
+                            </span>
+                        </div>
+                        <div>
+                            <a href="{% url 'admin:core_sendlist_change' dispatch.send_list.pk %}"
+                               class="btn btn-secondary btn-sm">Inspect recipients list</a>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>Sent times:</strong>
+                            <span class="stats-counter" id="sent_times_count_id">
+                                {{ dispatch.sent_times }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Card end -->
+
+    </div>
+</div>
+{% endblock body %}
+
+{% block js %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="/static/js/real_time_stats.js?1"></script>
+{% endblock js %}

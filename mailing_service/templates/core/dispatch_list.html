@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+<title>Dispatches overview</title>
+{% endblock title %}
+
+{% block body %}
+<h1 class="h1">Dispatches overview</h1>
+<hr>
+<div class="row">
+    {% for dispatch in dispatches %}
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ dispatch.title }}
+                    {% if dispatch.is_active %}
+                    <img class="status-icon" src="{% static 'icons/tick.svg' %}" alt="Tick icon">
+                    {% else %}
+                    <img class="status-icon" src="{% static 'icons/stop.svg' %}" alt="Tick icon">
+                    {% endif %}
+                </h5>
+                <hr>
+                <p class="card-text">{{ dispatch.text|truncatewords:20 }}</p>
+                <hr>
+                <p class="card-text">Next due: {{ dispatch.next_due_at }}</p>
+                <p class="card-text">Recipients: {{ dispatch.get_recipient_count }}</p>
+
+
+                <div class="justify-content-between d-flex">
+                    <div class="d-inline-block ">
+                        <a href="{% url 'dispatch-detail' dispatch.pk %}" class="btn btn-primary">View</a>
+                        <a href="{% url 'admin:core_dispatch_change' dispatch.pk %}" class="btn btn-secondary">Edit</a>
+                    </div>
+                    <div class="d-inline-block">
+                        <form method="post" action="{% url 'dispatch_action' dispatch.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" name="toggle_activation"
+                                    class="btn {% if dispatch.is_active %}btn-danger{% else %}btn-success{% endif %}">
+                                {% if dispatch.is_active %}
+                                    Deactivate
+                                {% else %}
+                                    Activate
+                                {% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock body %}
