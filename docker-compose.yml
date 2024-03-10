@@ -23,9 +23,11 @@ services:
       context: .
     env_file:
       - .env
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     restart: "always"
+    volumes:
+      - static_volume:/mailing_service/static
 
     depends_on:
       - db
@@ -39,9 +41,22 @@ services:
         max-size: "5m"
         max-file: "3"
 
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/usr/share/nginx/html/static
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - web
+    networks:
+      main:
+
 networks:
   main:
 
 volumes:
   postgres_db:
     driver: local
+  static_volume:
