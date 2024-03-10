@@ -47,7 +47,7 @@ services:
       - "80:80"
     volumes:
       - static_volume:/usr/share/nginx/html/static
-      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - ./config/nginx/conf.d/mailing_service.conf:/etc/nginx/conf.d/mailing_service.conf
     depends_on:
       - web
     networks:
