@@ -14,10 +14,12 @@ python-dotenv = "^1.0.1"
 psycopg2-binary = "^2.9.9"
 django-crontab = "^0.7.1"
 pytz = "^2024.1"
+django-extensions = "^3.2.3"
 
 [tool.poetry.group.test.dependencies]
 pytest = "*"
 factory_boy = "*"
+freezegun = "*"
 
 [build-system]
 requires = ["poetry-core"]
