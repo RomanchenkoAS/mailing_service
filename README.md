@@ -1,3 +1,17 @@
+# Installation
+
+
+# Deploy in production
+
+
+# Deploy for developement
+
+- export variables
+```bash
+source dev_env.sh 
+```
+
+
 # Тестовое задание
 
 на вакансию Бэкенд разработчик Python/Django с базовым знанием ReactJS
