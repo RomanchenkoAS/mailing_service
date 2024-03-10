@@ -1,16 +1,72 @@
 # Installation
 
+## Prerequisites
+
+- Git
+- Python 3.10+
+- pip
+- Poetry
+- Docker
+- Docker Compose
+
+## Steps
+
+First, clone this repository:
+
+```bash
+git clone https://github.com/RomanchenkoAS/mailing_service.git
+cd mailing_service
+```
+
+- Ensure you have Python 3.10+ and pip installed, then install Poetry:
+
+```bash
+pip install poetry==1.3.2
+```
+
+- Inside the project directory, install dependencies using Poetry:
+
+```bash
+poetry install 
+```
 
 # Deploy in production
 
+- Ensure Docker and Docker Compose are installed. To deploy the application stack in production:
+
+```bash
+docker compose up --build -d
+```
 
 # Deploy for developement
 
-- export variables
+- Create or ensure dev_env.sh in the project root contains the necessary environment variables for development. Example:
+
+```text
+# dev_env.sh
+export DEBUG=1
+export DB_NAME=dev_db
+...
+```
+
+- Source the environment variables:
+
 ```bash
 source dev_env.sh 
 ```
 
+- Start the database service:
+
+```bash
+docker compose up db -d
+```
+
+- Run migrations and then start the Django development server:
+
+```bash
+python3 manage.py migrate
+python3 manage.py runserver
+```
 
 # Тестовое задание
 
