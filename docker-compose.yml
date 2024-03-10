@@ -27,7 +27,7 @@ services:
       - "8000"
     restart: "always"
     volumes:
-      - static_volume:/mailing_service/static
+      - static_volume:/app/staticfiles
 
     depends_on:
       - db

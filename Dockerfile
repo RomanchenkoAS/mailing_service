@@ -10,6 +10,10 @@ RUN pip install poetry==1.3.2 \
 COPY . /app/
 COPY .env /app/.env
 
+RUN mkdir -p "/home/var/mailing/emails"
 RUN python manage.py collectstatic --noinput
+COPY entrypoint.sh /app/entrypoint.sh
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "mailing_service.wsgi:application"]
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
