@@ -1,0 +1,11 @@
+.stats-counter {
+    margin-left: 2rem;
+    font-size: larger;
+    font-weight: bold;
+}
+
+.status-icon {
+    width: 25px;
+    margin-left: 10px;
+    vertical-align: bottom;
+}

@@ -4,6 +4,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "mailing_service", "static"),)
 DOTENV_PATH = BASE_DIR / '.env'
 load_dotenv(dotenv_path=DOTENV_PATH)
 
@@ -19,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_crontab',
+    'django_extensions',
     'core',
 ]
 
@@ -37,7 +40,7 @@ ROOT_URLCONF = 'mailing_service.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        "DIRS": [BASE_DIR / "mailing_service/templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -51,6 +54,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mailing_service.wsgi.application'
+ASGI_APPLICATION = 'mailing_service.asgi.application'
 
 DATABASES = {
     "default": {
@@ -64,9 +68,6 @@ DATABASES = {
         "PORT": os.environ.get("DB_PORT"),
     }
 }
-
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -101,6 +102,11 @@ CRONJOBS = [
     ('*/5 * * * *', 'django.core.management.call_command', ['send_dispatches'], {}, '>> /logfile.log')
 ]
 
-# Email Backend configuration
+# Email configuration
+DEFAULT_FROM_EMAIL = os.environ.get('SENDER_EMAIL', '<mailing.dev@example.com>')
+
+# For debug - send to file
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/home/var/mailing/emails'
+# For actual sending with SMTP
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
