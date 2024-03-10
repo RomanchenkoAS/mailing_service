@@ -9,7 +9,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dispatches_due = [dispatch for dispatch in Dispatch.objects.all() if dispatch.is_due()]
         if not dispatches_due:
-            self.stdout.write(self.style.SUCCESS('No dispatches are due at this time.'))
             return
 
         for dispatch in dispatches_due:
