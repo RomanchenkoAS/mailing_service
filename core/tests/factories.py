@@ -1,7 +1,7 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from core.models import Email, SendList, Footer, Dispatch
+from core.models import *
 
 
 class EmailFactory(DjangoModelFactory):
@@ -46,3 +46,12 @@ class DispatchFactory(DjangoModelFactory):
     subject = factory.Faker('sentence')
     text = factory.Faker('paragraph')
     footer = factory.SubFactory(FooterFactory)
+
+
+class SchedulerFactory(DjangoModelFactory):
+    class Meta:
+        model = Scheduler
+
+    frequency = factory.Iterator(['daily', 'weekly', 'monthly'])
+    time_of_day = factory.LazyFunction(
+        lambda: timezone.now().time().replace(hour=12, minute=0, second=0, microsecond=0))
