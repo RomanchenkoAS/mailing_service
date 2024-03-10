@@ -11,7 +11,6 @@ COPY . /app/
 COPY .env /app/.env
 
 RUN mkdir -p "/home/var/mailing/emails"
-RUN python manage.py collectstatic --noinput
 COPY entrypoint.sh /app/entrypoint.sh
 
 RUN chmod +x /app/entrypoint.sh
