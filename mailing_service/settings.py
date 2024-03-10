@@ -96,6 +96,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# This is for django-cron (must be substituted with celery/celery-beat)
 CRONJOBS = [
     ('*/5 * * * *', 'django.core.management.call_command', ['send_dispatches'], {}, '>> /logfile.log')
 ]
+
+# Email Backend configuration
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/home/var/mailing/emails'
