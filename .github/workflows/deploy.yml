@@ -20,7 +20,8 @@ jobs:
       - name: Deploy project
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd /path/to/your/project
+          mkdir -p mailing_service
+            cd mailing_service
             git pull
             docker compose up --build -d
           EOF
