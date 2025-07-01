@@ -1,4 +1,5 @@
 import datetime
+import calendar
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -114,37 +115,62 @@ class Dispatch(models.Model):
         self.save()
 
     def update_next_due_at(self, save: bool = False) -> None:
+        """
+            Calculate and set field next_due_at depending on chosen scheduler frequency.
+        """
         if not self.scheduler:
             self.next_due_at = None
             return
 
-        n = now()
-        scheduled_time_today = make_aware(datetime.datetime.combine(n.date(), self.scheduler.time_of_day))
-        next_due = scheduled_time_today  # Default to today for daily
+        current_time = now()
+        today = current_time.date()
+        scheduled_time = self.scheduler.time_of_day
+
+        # Create today's scheduled datetime
+        scheduled_datetime_today = make_aware(
+            datetime.datetime.combine(today, scheduled_time)
+        )
 
         match self.scheduler.frequency:
             case 'daily':
-                next_due = scheduled_time_today
-            case 'weekly':
-                next_due += datetime.timedelta(days=(7 - scheduled_time_today.weekday()))
-            case 'monthly':
-                month = (scheduled_time_today.month % 12) + 1
-                year = scheduled_time_today.year + (scheduled_time_today.month + 1 > 12)
-                day = min(scheduled_time_today.day, [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1])
-                next_due = make_aware(
-                    datetime.datetime(year, month, day, scheduled_time_today.hour, scheduled_time_today.minute))
+                # If today's time has passed, schedule for tomorrow
+                if current_time >= scheduled_datetime_today:
+                    next_due = scheduled_datetime_today + datetime.timedelta(days=1)
+                else:
+                    next_due = scheduled_datetime_today
 
-        # Adjust for dispatches that should have already been sent
-        if next_due <= n:
-            match self.scheduler.frequency:
-                case 'daily':
-                    next_due += datetime.timedelta(days=1)
-                case 'weekly':
-                    next_due += datetime.timedelta(weeks=1)
-                case 'monthly':
-                    next_due = next_due.replace(month=(next_due.month % 12) + 1)
-                    if next_due.month == 1:
-                        next_due = next_due.replace(year=next_due.year + 1)
+            case 'weekly':
+                # If today's time has passed, schedule for next week same day
+                if current_time >= scheduled_datetime_today:
+                    next_due = scheduled_datetime_today + datetime.timedelta(days=7)
+                else:
+                    next_due = scheduled_datetime_today
+
+            case 'monthly':
+                # Calculate next month's date
+                if current_time >= scheduled_datetime_today:
+                    # Move to next month
+                    if today.month == 12:
+                        next_year = today.year + 1
+                        next_month = 1
+                    else:
+                        next_year = today.year
+                        next_month = today.month + 1
+
+                    # Handle month length differences
+                    max_day_in_next_month = calendar.monthrange(next_year, next_month)[1]
+                    next_day = min(today.day, max_day_in_next_month)
+
+                    next_due = make_aware(
+                        datetime.datetime(
+                            next_year, next_month, next_day,
+                            scheduled_time.hour, scheduled_time.minute, scheduled_time.second
+                        )
+                    )
+                else:
+                    next_due = scheduled_datetime_today
+            case _:
+                raise ValueError(f"Misconfigured scheduler: {self.scheduler.frequency}")
 
         self.next_due_at = next_due
         if save:

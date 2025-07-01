@@ -16,6 +16,7 @@ django-crontab = "^0.7.1"
 pytz = "^2024.1"
 django-extensions = "^3.2.3"
 gunicorn = "^21.2.0"
+pytest-django = "^4.11.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "*"
@@ -26,4 +27,5 @@ freezegun = "*"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.scripts]
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "mailing_service.settings"
