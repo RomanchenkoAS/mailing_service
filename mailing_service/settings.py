@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import sys
 
 from dotenv import load_dotenv
 
@@ -57,18 +58,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'mailing_service.wsgi.application'
 ASGI_APPLICATION = 'mailing_service.asgi.application'
 
-DATABASES = {
-    "default": {
-        "ENGINE": os.environ.get(
-            "DB_ENGINE",
-        ),
-        "NAME": os.environ.get("POSTGRES_DB"),
-        "USER": os.environ.get("POSTGRES_USER"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-        "HOST": os.environ.get("DB_HOST"),
-        "PORT": os.environ.get("DB_PORT"),
+if 'test' in sys.argv or 'pytest' in sys.argv[0]:
+    DATABASES = {  
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": os.environ.get(
+                "DB_ENGINE",
+            ),
+            "NAME": os.environ.get("POSTGRES_DB"),
+            "USER": os.environ.get("POSTGRES_USER"),
+            "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+            "HOST": os.environ.get("DB_HOST"),
+            "PORT": os.environ.get("DB_PORT"),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
